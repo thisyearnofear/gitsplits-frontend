@@ -1,9 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useAppKit } from "@reown/appkit/react";
-import { useAccount, useBalance, useReadContract } from "wagmi";
-import { formatEther } from "viem";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  useAppKit,
+  useAppKitAccount,
+  useAppKitState,
+} from "@reown/appkit/react";
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
+
+import { formatEther, parseEther } from "viem";
 import { CONTRACT_ADDRESS } from "@/utils/contract";
 import GitHubSplitsABI from "@/contracts/GitHubSplits.json";
 import { Wallet, DollarSign, Users, PieChart, Info } from "lucide-react";
@@ -12,7 +22,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipTrigger,
@@ -25,10 +34,16 @@ import ManageShares from "@/app/components/ManageShares";
 import { DonationEmbed } from "@/app/components/DonationEmbed";
 import CodeAttribution from "@/app/components/CodeAttribution";
 import { QuickStatCardProps, MainContentProps } from "@/types";
+import SharesList from "@/app/components/SharesList";
+import RepoInfo from "@/app/components/RepoInfo";
 
 const Header = () => {
   const { open } = useAppKit();
-  const { isConnected, address } = useAccount();
+  const { address, isConnected } = useAppKitAccount();
+  const { selectedNetworkId } = useAppKitState();
+
+  const scrollSepoliaId = "eip155:534351"; // Scroll Sepolia chain ID as a string
+  const isWrongNetwork = selectedNetworkId !== scrollSepoliaId;
 
   return (
     <div className="flex justify-between items-center w-full px-6 py-4 bg-white/80 backdrop-blur-sm fixed top-0 z-50">
@@ -37,15 +52,15 @@ const Header = () => {
       </div>
       <div className="flex items-center space-x-4">
         {!isConnected ? (
-          <Button onClick={() => open()} variant="outline" size="sm">
-            <Wallet className="w-4 h-4 mr-2" />
-            Connect Wallet
-          </Button>
+          <w3m-connect-button
+            size="sm"
+            label="Connect Wallet"
+            loadingLabel="Connecting..."
+          />
         ) : (
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">
-              {`${address?.slice(0, 6)}...${address?.slice(-4)}`}
-            </span>
+            {isWrongNetwork && <w3m-network-button disabled={false} />}
+            <w3m-account-button balance="show" />
           </div>
         )}
       </div>
@@ -78,29 +93,62 @@ const MainContent: React.FC<MainContentProps> = ({
 }) => {
   const [donationAmount, setDonationAmount] = useState("");
   const [isDonating, setIsDonating] = useState(false);
+  const { writeContract } = useWriteContract();
 
   const handleDonate = async () => {
-    // Implement donation logic here
+    if (!donationAmount || parseFloat(donationAmount) <= 0) {
+      toast.error("Please enter a valid donation amount.");
+      return;
+    }
     setIsDonating(true);
-    // ... donation logic
-    setIsDonating(false);
+    try {
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: GitHubSplitsABI.abi,
+        functionName: "donate",
+        value: parseEther(donationAmount),
+      });
+      toast.success("Donation successful!");
+      setDonationAmount("");
+    } catch (error) {
+      console.error("Error donating:", error);
+      toast.error("Donation failed. Please try again.");
+    } finally {
+      setIsDonating(false);
+    }
   };
 
   return (
-    <div className="pt-20 px-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="pt-20 px-6"
+    >
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Hero Section */}
-        <section className="text-center space-y-4">
+        <motion.section
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="text-center space-y-4"
+        >
           <h2 className="text-3xl font-bold">
             Fork Code. Credit Contributions. Split Donations.
           </h2>
           <p className="text-gray-600">
             Fairly distribute donations among GitHub contributors
           </p>
-        </section>
+          <RepoInfo />
+        </motion.section>
 
         {/* Quick Stats */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <motion.section
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
           <QuickStatCard
             title="Total Donations"
             value={`${
@@ -118,48 +166,54 @@ const MainContent: React.FC<MainContentProps> = ({
             value={`${userShares ? formatEther(userShares) : "0"} ETH`}
             icon={<PieChart className="h-4 w-4 text-muted-foreground" />}
           />
-        </section>
+        </motion.section>
 
         {/* Main Tabs */}
-        <Tabs defaultValue="overview">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="donate">Donate</TabsTrigger>
-            <TabsTrigger value="manage">Manage Shares</TabsTrigger>
-            <TabsTrigger value="attribution">Attribution</TabsTrigger>
-          </TabsList>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <Tabs defaultValue="overview">
+            <TabsList>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="donate">Donate</TabsTrigger>
+              <TabsTrigger value="manage">Manage Shares</TabsTrigger>
+              <TabsTrigger value="attribution">Attribution</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="overview">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ContractOverview
-                contractBalance={contractBalance}
-                totalShares={totalShares}
-                userShares={userShares}
-                userBalance={userBalance}
+            <TabsContent value="overview">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ContractOverview
+                  contractBalance={contractBalance}
+                  totalShares={totalShares}
+                  userShares={userShares}
+                  userBalance={userBalance}
+                />
+                <ShareDistribution allShares={allShares} />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="donate">
+              <DonationEmbed
+                donationAmount={donationAmount}
+                setDonationAmount={setDonationAmount}
+                isDonating={isDonating}
+                handleDonate={handleDonate}
               />
-              <ShareDistribution allShares={allShares} />
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="donate">
-            <DonationEmbed
-              donationAmount={donationAmount}
-              setDonationAmount={setDonationAmount}
-              isDonating={isDonating}
-              handleDonate={handleDonate}
-            />
-          </TabsContent>
+            <TabsContent value="manage">
+              <ManageShares />
+            </TabsContent>
 
-          <TabsContent value="manage">
-            <ManageShares />
-          </TabsContent>
-
-          <TabsContent value="attribution">
-            <CodeAttribution />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="attribution">
+              <CodeAttribution />
+            </TabsContent>
+          </Tabs>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -196,17 +250,14 @@ export default function GitSplitsApp() {
     address,
   });
 
-  const allShares = allSharesData
-    ? (allSharesData as [string[], bigint[]]).reduce((acc, curr, index) => {
-        if (index === 0) {
-          return (curr as string[]).map((username, i) => ({
-            username,
-            amount: (allSharesData as [string[], bigint[]])[1][i],
-          }));
-        }
-        return acc;
-      }, [] as { username: string; amount: bigint }[])
-    : [];
+  const allShares = React.useMemo(() => {
+    if (!allSharesData) return [];
+    const [usernames, amounts] = allSharesData as [string[], bigint[]];
+    return usernames.map((username, index) => ({
+      username,
+      amount: amounts[index],
+    }));
+  }, [allSharesData]);
 
   useEffect(() => {
     setIsClient(true);
@@ -226,6 +277,7 @@ export default function GitSplitsApp() {
           userBalance={userBalance}
           allShares={allShares}
         />
+        <SharesList shares={allShares} />
       </div>
     </TooltipProvider>
   );

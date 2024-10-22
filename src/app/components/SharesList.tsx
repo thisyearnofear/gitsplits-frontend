@@ -10,10 +10,6 @@ interface SharesListProps {
 }
 
 const SharesList: React.FC<SharesListProps> = ({ shares }) => {
-  if (!shares || shares.length === 0) {
-    return <p className="text-gray-500">No shares available</p>;
-  }
-
   return (
     <ul className="space-y-2">
       {shares.map((share, index) => (

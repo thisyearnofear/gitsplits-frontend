@@ -13,6 +13,36 @@ import {
 import { ShareDistributionProps } from "@/types";
 
 const ShareDistribution: React.FC<ShareDistributionProps> = ({ allShares }) => {
+  if (!allShares) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-center">
+            <Github className="mr-2" /> Share Distribution
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-gray-500">Loading shares...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (allShares.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-center">
+            <Github className="mr-2" /> Share Distribution
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-gray-500">No shares available</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -30,19 +60,15 @@ const ShareDistribution: React.FC<ShareDistributionProps> = ({ allShares }) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {allShares && allShares.length > 0 ? (
-          <PieChart
-            data={allShares.map((share, index) => ({
-              title: share.username,
-              value: Number(formatEther(share.amount)),
-              color: `hsl(${(index * 137.5) % 360}, 70%, 50%)`,
-            }))}
-            label={({ dataEntry }) => dataEntry.title}
-            labelStyle={{ fontSize: "5px", fill: "white" }}
-          />
-        ) : (
-          <p className="text-center text-gray-500">No shares available</p>
-        )}
+        <PieChart
+          data={allShares.map((share, index) => ({
+            title: share.username,
+            value: Number(formatEther(share.amount)),
+            color: `hsl(${(index * 137.5) % 360}, 70%, 50%)`,
+          }))}
+          label={({ dataEntry }) => dataEntry.title}
+          labelStyle={{ fontSize: "5px", fill: "white" }}
+        />
       </CardContent>
     </Card>
   );

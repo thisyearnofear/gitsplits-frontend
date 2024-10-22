@@ -18,10 +18,12 @@ import {
   FeatureCardProps,
   StepCardProps,
   EnhancedAttributionWidgetProps,
+  LandingPageProps,
 } from "@/types";
 import RepoInfo from "./RepoInfo";
 import AttributionWidget from "./AttributionWidget";
 import SimplifiedSplitsSetup from "./SimplifiedSplitsSetup";
+import { useToast } from "@/hooks/use-toast";
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
@@ -125,14 +127,23 @@ const EnhancedAttributionWidget: React.FC<EnhancedAttributionWidgetProps> = ({
   );
 };
 
-const LandingPage: React.FC = () => {
+const LandingPage: React.FC<LandingPageProps> = ({
+  isConnected,
+  onDashboardClick,
+  onLoginPrompt,
+}) => {
   const [repoUrl, setRepoUrl] = useState("");
   const [showRepoInfo, setShowRepoInfo] = useState(false);
   const splitsSetupRef = useRef<HTMLDivElement>(null);
   const [autoRepoUrl, setAutoRepoUrl] = useState("");
+  const { toast } = useToast();
 
   const handleSupportClick = () => {
-    splitsSetupRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isConnected) {
+      splitsSetupRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      onLoginPrompt();
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -141,9 +152,26 @@ const LandingPage: React.FC = () => {
   };
 
   const handleAutoSetup = () => {
-    // Implement the automatic setup logic here
-    console.log("Automatic setup for:", autoRepoUrl);
-    // This would typically involve calling an API to create the contract and generate the embed code
+    if (isConnected) {
+      // Implement the automatic setup logic here
+      console.log("Automatic setup for:", autoRepoUrl);
+      // This would typically involve calling an API to create the contract and generate the embed code
+      toast({
+        title: "Setup Initiated",
+        description: "Generating splits and embed code for " + autoRepoUrl,
+      });
+      onDashboardClick(); // Navigate to dashboard after setup
+    } else {
+      onLoginPrompt();
+    }
+  };
+
+  const handleDashboardNavigation = () => {
+    if (isConnected) {
+      onDashboardClick();
+    } else {
+      onLoginPrompt();
+    }
   };
 
   return (
@@ -162,6 +190,15 @@ const LandingPage: React.FC = () => {
           <p className="text-2xl text-gray-700 max-w-2xl mx-auto">
             Attribution. Open Source Splits. Onchain.
           </p>
+
+          {isConnected && (
+            <Button
+              onClick={onDashboardClick}
+              className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            >
+              Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          )}
 
           {/* Repository Input */}
           <form onSubmit={handleSubmit} className="max-w-xl mx-auto mt-8">
@@ -299,13 +336,16 @@ const LandingPage: React.FC = () => {
         </div>
 
         {/* Simplified GitSplits Setup */}
-        <div className="py-16 mt-0">
+        <div className="py-16 mt-0" ref={splitsSetupRef}>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div>
               <h3 className="text-xl font-semibold mb-4 text-center">
                 Manual Setup
               </h3>
-              <SimplifiedSplitsSetup />
+              <SimplifiedSplitsSetup
+                onLoginRequired={onLoginPrompt}
+                isConnected={isConnected}
+              />
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-4 text-center">
@@ -332,13 +372,12 @@ const LandingPage: React.FC = () => {
           </div>
           <div className="mt-8 text-center">
             <Button
-              onClick={() => {
-                /* Navigate to full dashboard */
-              }}
+              onClick={handleDashboardNavigation}
               size="lg"
               className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
             >
-              Unlock Full Potential in Dashboard
+              {isConnected ? "Go to Dashboard" : "Login to Access Dashboard"}{" "}
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>

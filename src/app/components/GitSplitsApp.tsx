@@ -20,11 +20,14 @@ import ShareDistribution from "@/app/components/ShareDistribution";
 import ManageShares from "@/app/components/ManageShares";
 import { DonationEmbed } from "@/app/components/DonationEmbed";
 import CodeAttribution from "@/app/components/CodeAttribution";
-import { MainContentProps, QuickStatCardProps } from "@/types";
+import {
+  MainContentProps,
+  QuickStatCardProps,
+  GitSplitsAppProps,
+} from "@/types";
 import SharesList from "@/app/components/SharesList";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign, Users, PieChart } from "lucide-react";
-import { RepoInfo as RepoInfoType } from "@/types";
 
 const QuickStatCard: React.FC<QuickStatCardProps> = ({
   title,
@@ -48,6 +51,7 @@ const MainContent: React.FC<MainContentProps> = ({
   userShares,
   userBalance,
   allShares,
+  isGitHubConnected,
 }) => {
   const [donationAmount, setDonationAmount] = useState("");
   const [isDonating, setIsDonating] = useState(false);
@@ -176,7 +180,7 @@ const MainContent: React.FC<MainContentProps> = ({
   );
 };
 
-const GitSplitsApp: React.FC = () => {
+const GitSplitsApp: React.FC<GitSplitsAppProps> = ({ isGitHubConnected }) => {
   const [isClient, setIsClient] = useState(false);
   const { address } = useAccount();
 
@@ -233,6 +237,7 @@ const GitSplitsApp: React.FC = () => {
         userShares={userShares as bigint}
         userBalance={userBalance}
         allShares={allShares}
+        isGitHubConnected={isGitHubConnected}
       />
       <SharesList shares={allShares} />
     </div>

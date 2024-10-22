@@ -80,6 +80,7 @@ export interface MainContentProps {
       }
     | undefined;
   allShares: Share[];
+  isGitHubConnected: boolean;
 }
 
 // Add these new types
@@ -99,9 +100,10 @@ export interface Contributor {
   contributions: number;
 }
 
-// Update the existing LandingPageProps interface
 export interface LandingPageProps {
-  // Add any props if needed for LandingPage
+  isConnected: boolean;
+  onDashboardClick: () => void;
+  onLoginPrompt: () => void;
 }
 
 // Add this new interface
@@ -147,7 +149,14 @@ export interface HomeProps {
   // Add any props if needed for the Home component
 }
 
+// Add this new interface for the props that Home will pass to LandingPage
+export interface HomeLandingPageProps {
+  isConnected: boolean;
+  onDashboardClick: () => void;
+  onLoginPrompt: () => void;
+}
+
 // Add GitSplitsAppProps if needed
 export interface GitSplitsAppProps {
-  // Add any props if needed
+  isGitHubConnected: boolean;
 }

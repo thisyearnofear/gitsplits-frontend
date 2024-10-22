@@ -14,7 +14,15 @@ interface Contributor {
   id: string;
 }
 
-const SimplifiedSplitsSetup: React.FC = () => {
+interface SimplifiedSplitsSetupProps {
+  onLoginRequired: () => void;
+  isConnected: boolean;
+}
+
+const SimplifiedSplitsSetup: React.FC<SimplifiedSplitsSetupProps> = ({
+  onLoginRequired,
+  isConnected,
+}) => {
   const [contributors, setContributors] = useState<Contributor[]>([
     {
       username: "",
@@ -43,7 +51,11 @@ const SimplifiedSplitsSetup: React.FC = () => {
   );
 
   const handleInteraction = () => {
-    setHasInteracted(true); // Mark interaction on any input change
+    if (!isConnected) {
+      onLoginRequired();
+    } else {
+      setHasInteracted(true);
+    }
   };
 
   const addContributor = useCallback(() => {
@@ -152,6 +164,16 @@ const SimplifiedSplitsSetup: React.FC = () => {
     );
   }, [contributors]);
 
+  const handleSetupSplits = () => {
+    if (isConnected) {
+      // Implement the setup logic here
+      console.log("Setting up splits with contributors:", contributors);
+      // This would typically involve calling an API to create the contract
+    } else {
+      onLoginRequired();
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -215,6 +237,14 @@ const SimplifiedSplitsSetup: React.FC = () => {
             </p>
           </div>
         )}
+
+        <Button
+          onClick={handleSetupSplits}
+          className="w-full mt-4"
+          disabled={hasErrors || !hasInteracted}
+        >
+          {isConnected ? "Set Up Splits" : "Login to Set Up Splits"}
+        </Button>
       </CardContent>
     </Card>
   );

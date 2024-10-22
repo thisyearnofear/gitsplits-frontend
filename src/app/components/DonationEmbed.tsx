@@ -1,49 +1,53 @@
-"use client";
+import React from "react";
+import { DonationEmbedProps } from "@/types";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
-import { useState } from "react";
-import { useWriteContract } from "wagmi";
-import { parseEther } from "viem";
-import { CONTRACT_ADDRESS } from "@/utils/contract";
-import GitHubSplitsABI from "@/contracts/GitHubSplits.json";
-
-export function DonationEmbed() {
-  const [amount, setAmount] = useState("");
-  const { writeContract } = useWriteContract();
-
-  const handleDonate = async () => {
-    if (amount) {
-      try {
-        await writeContract({
-          address: CONTRACT_ADDRESS,
-          abi: GitHubSplitsABI.abi,
-          functionName: "donate",
-          value: parseEther(amount),
-        });
-        alert("Donation successful!");
-        setAmount("");
-      } catch (error) {
-        console.error("Error donating:", error);
-        alert("Donation failed. Please try again.");
-      }
-    }
-  };
-
+export function DonationEmbed({
+  donationAmount,
+  setDonationAmount,
+  isDonating,
+  handleDonate,
+}: DonationEmbedProps) {
   return (
-    <div className="p-4 border rounded">
-      <h3 className="text-lg font-bold mb-2">Donate to this project</h3>
-      <input
-        type="number"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        placeholder="Amount in ETH"
-        className="w-full p-2 mb-2 border rounded"
-      />
-      <button
-        onClick={handleDonate}
-        className="w-full p-2 bg-green-500 text-white rounded"
-      >
-        Donate
-      </button>
-    </div>
+    <Card className="bg-gentle-orange">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-center">
+          Donate to this project
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="ml-2 h-4 w-4 cursor-help" />
+            </TooltipTrigger>
+            <TooltipContent>
+              Your donation will be distributed among contributors based on
+              their shares.
+            </TooltipContent>
+          </Tooltip>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Input
+          type="number"
+          value={donationAmount}
+          onChange={(e) => setDonationAmount(e.target.value)}
+          placeholder="Amount in ETH"
+          className="text-center"
+        />
+        <Button
+          onClick={handleDonate}
+          disabled={isDonating}
+          className="w-full bg-primary hover:bg-primary/90"
+        >
+          {isDonating ? "Processing..." : "Donate"}
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,7 +1,7 @@
 import { ethers, Provider } from "ethers";
 import GitHubSplitsABI from "../contracts/GitHubSplits.json";
 
-export const CONTRACT_ADDRESS = "0xe6a54Ce9e840f51D7493F0b882e38Ff611fdd7a6";
+export const CONTRACT_ADDRESS = "0xa076D95476003420bae2E726B4fBdD968d3F98C1";
 
 export const getContract = (signer: ethers.Signer) => {
   return new ethers.Contract(CONTRACT_ADDRESS, GitHubSplitsABI.abi, signer);

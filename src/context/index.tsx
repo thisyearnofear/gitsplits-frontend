@@ -26,8 +26,11 @@ const modal = createAppKit({
   defaultNetwork: networks[0],
   metadata: metadata,
   features: {
-    analytics: true,
+    email: true,
+    socials: ["github", "farcaster"],
+    emailShowWallets: true,
   },
+  allWallets: "SHOW", // default to SHOW
 });
 
 export default function Web3ModalProvider({

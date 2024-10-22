@@ -81,3 +81,73 @@ export interface MainContentProps {
     | undefined;
   allShares: Share[];
 }
+
+// Add these new types
+export interface RepoInfo {
+  name: string;
+  owner: string;
+  isFork: boolean;
+  originalRepo: {
+    name: string;
+    owner: string;
+  } | null;
+  contributors: Contributor[];
+}
+
+export interface Contributor {
+  username: string;
+  contributions: number;
+}
+
+// Update the existing LandingPageProps interface
+export interface LandingPageProps {
+  // Add any props if needed for LandingPage
+}
+
+// Add this new interface
+export interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+// Add this new interface
+export interface StepCardProps {
+  number: string;
+  title: string;
+  description: string;
+}
+
+// Add this new interface
+export interface RepoInfoProps {
+  url: string;
+}
+
+export interface AttributionWidgetProps {
+  repoInfo: RepoInfo;
+  contractAddress: string;
+  displayStyle: "minimal" | "expanded";
+  onSupportClick?: () => void;
+}
+
+export interface EnhancedAttributionWidgetProps {
+  repoInfo: RepoInfo;
+  contractAddress: string;
+  displayStyle: "minimal" | "expanded";
+}
+
+export interface EmbedCodeGeneratorProps {
+  repoInfo: RepoInfo;
+  contractAddress: string;
+  displayStyle: "minimal" | "expanded";
+}
+
+// Update HomeProps if needed
+export interface HomeProps {
+  // Add any props if needed for the Home component
+}
+
+// Add GitSplitsAppProps if needed
+export interface GitSplitsAppProps {
+  // Add any props if needed
+}

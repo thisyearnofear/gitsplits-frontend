@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Github,
@@ -138,6 +138,10 @@ const LandingPage: React.FC<LandingPageProps> = ({
   const [autoRepoUrl, setAutoRepoUrl] = useState("");
   const { toast } = useToast();
 
+  useEffect(() => {
+    // Any existing useEffect logic can remain here
+  }, []);
+
   const handleSupportClick = () => {
     if (isConnected) {
       splitsSetupRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -152,17 +156,9 @@ const LandingPage: React.FC<LandingPageProps> = ({
   };
 
   const handleAutoSetup = () => {
-    if (isConnected) {
-      // Implement the automatic setup logic here
-      console.log("Automatic setup for:", autoRepoUrl);
-      // This would typically involve calling an API to create the contract and generate the embed code
-      toast({
-        title: "Setup Initiated",
-        description: "Generating splits and embed code for " + autoRepoUrl,
-      });
-      onDashboardClick(); // Navigate to dashboard after setup
-    } else {
-      onLoginPrompt();
+    if (autoRepoUrl) {
+      localStorage.setItem("lastEnteredRepo", autoRepoUrl);
+      handleDashboardNavigation();
     }
   };
 

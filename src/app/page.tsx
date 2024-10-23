@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import dynamic from "next/dynamic";
 import { useAppKitAccount, useAppKit } from "@reown/appkit/react";
 import Header from "@/app/components/Header";
-import { HomeProps, HomeLandingPageProps } from "@/types";
+import { HomeProps, LandingPageProps } from "@/types";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const LandingPage = dynamic(() => import("@/app/components/LandingPage"), {
@@ -30,7 +30,7 @@ const Home: React.FC<HomeProps> = () => {
     }
   };
 
-  const landingPageProps: HomeLandingPageProps = {
+  const landingPageProps: LandingPageProps = {
     isConnected,
     onDashboardClick: handleDashboardClick,
     onLoginPrompt: handleLoginPrompt,

@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useAccount, useWriteContract, useSignMessage } from "wagmi";
 import { parseEther } from "viem";
 import { toast } from "react-toastify";
-import { CONTRACT_ADDRESS } from "@/utils/contract";
 import GitHubSplitsABI from "@/contracts/GitHubSplits.json";
 import { AddShareForm } from "./AddShareForm";
 import { ClaimFundsForm } from "./ClaimFundsForm";
+import { ManageSharesProps } from "@/types";
 
-const ManageShares: React.FC = () => {
+const ManageShares: React.FC<ManageSharesProps> = ({ contractAddress }) => {
   const [githubUsername, setGithubUsername] = useState("");
   const [shareAmount, setShareAmount] = useState("");
   const [isAddingShare, setIsAddingShare] = useState(false);
@@ -26,7 +26,7 @@ const ManageShares: React.FC = () => {
     setIsAddingShare(true);
     try {
       await writeContract({
-        address: CONTRACT_ADDRESS,
+        address: contractAddress,
         abi: GitHubSplitsABI.abi,
         functionName: "addShare",
         args: [githubUsername, parseEther(shareAmount)],
@@ -53,7 +53,7 @@ const ManageShares: React.FC = () => {
       const message = `I am ${githubUsername} on GitHub`;
       const signature = await signMessageAsync({ message });
       await writeContract({
-        address: CONTRACT_ADDRESS,
+        address: contractAddress,
         abi: GitHubSplitsABI.abi,
         functionName: "claim",
         args: [githubUsername, signature],

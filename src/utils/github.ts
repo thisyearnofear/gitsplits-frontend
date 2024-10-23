@@ -1,7 +1,7 @@
 // utils/github.ts
 
 import axios from "axios";
-import { RepoInfo } from "@/types";
+import { RepoInfo, Contributor } from "@/types";
 
 // Existing function for repo info
 export async function getRepoInfo(url: string): Promise<RepoInfo> {
@@ -37,14 +37,23 @@ export async function getRepoInfo(url: string): Promise<RepoInfo> {
             owner: originalRepo.owner.login,
           }
         : null,
-      contributors: contributors.map((c: any) => ({
-        username: c.login,
-        contributions: c.contributions,
-      })),
+      contributors: contributors.map(
+        (c: any): Contributor => ({
+          username: c.login,
+          contributions: c.contributions,
+        })
+      ),
     };
   } catch (error) {
     console.error("Error fetching repo info:", error);
-    throw error;
+    // Return a default or partial RepoInfo object when GitHub API is unavailable
+    return {
+      name: repo,
+      owner: owner,
+      isFork: false,
+      originalRepo: null,
+      contributors: [],
+    };
   }
 }
 

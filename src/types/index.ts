@@ -3,87 +3,24 @@
 import { Dispatch, SetStateAction } from "react";
 import { ReactNode } from "react";
 
+// Basic types
+export interface Contributor {
+  username: string;
+  contributions: number;
+}
+
 export interface Share {
   username: string;
   amount: bigint;
 }
 
-export interface ContractState {
-  contractBalance: bigint;
-  totalShares: bigint;
-  userShares: bigint;
-  allShares: Share[];
+export interface Contract {
+  address: `0x${string}`;
+  name: string;
+  description: string;
 }
 
-export interface StatusMessageProps {
-  status: string;
-}
-
-export interface ContractOverviewProps {
-  contractBalance: bigint | unknown;
-  totalShares: bigint | unknown;
-  userShares: bigint | unknown;
-  userBalance:
-    | {
-        decimals: number;
-        formatted: string;
-        symbol: string;
-        value: bigint;
-      }
-    | undefined;
-}
-
-export interface ManageSharesProps {}
-
-export interface SharesListProps {
-  shares: Share[];
-}
-
-export interface ConnectWalletProps {
-  isClient: boolean;
-}
-
-export interface ShareDistributionProps {
-  allShares: Share[];
-}
-
-export interface CodeAttributionProps {}
-
-export interface DonationEmbedProps {
-  donationAmount: string;
-  setDonationAmount: Dispatch<SetStateAction<string>>;
-  isDonating: boolean;
-  handleDonate: () => Promise<void>;
-}
-
-export interface TooltipProps {
-  content: string;
-  children: ReactNode;
-}
-
-export interface QuickStatCardProps {
-  title: string;
-  value: string | number;
-  icon: ReactNode;
-}
-
-export interface MainContentProps {
-  contractBalance: bigint;
-  totalShares: bigint;
-  userShares: bigint;
-  userBalance:
-    | {
-        decimals: number;
-        formatted: string;
-        symbol: string;
-        value: bigint;
-      }
-    | undefined;
-  allShares: Share[];
-  isGitHubConnected: boolean;
-}
-
-// Add these new types
+// Repository related types
 export interface RepoInfo {
   name: string;
   owner: string;
@@ -95,36 +32,7 @@ export interface RepoInfo {
   contributors: Contributor[];
 }
 
-export interface Contributor {
-  username: string;
-  contributions: number;
-}
-
-export interface LandingPageProps {
-  isConnected: boolean;
-  onDashboardClick: () => void;
-  onLoginPrompt: () => void;
-}
-
-// Add this new interface
-export interface FeatureCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-// Add this new interface
-export interface StepCardProps {
-  number: string;
-  title: string;
-  description: string;
-}
-
-// Add this new interface
-export interface RepoInfoProps {
-  url: string;
-}
-
+// Component props
 export interface AttributionWidgetProps {
   repoInfo: RepoInfo;
   contractAddress: string;
@@ -144,19 +52,113 @@ export interface EmbedCodeGeneratorProps {
   displayStyle: "minimal" | "expanded";
 }
 
-// Update HomeProps if needed
+export interface DashboardProps {
+  isGitHubConnected: boolean;
+  setIsGitHubConnected: (connected: boolean) => void;
+}
+
+export interface RepoCardProps {
+  name: string;
+  owner: string;
+  stats: {
+    tips: string;
+    contributors: number;
+    forks: number;
+  };
+  onSelect: () => void;
+}
+
+export interface PreviewCardProps {
+  type: "minimal" | "enhanced";
+  title: string;
+  description: string;
+}
+
+export interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+}
+
+export interface SplitsTableProps {
+  splits: Array<{ username: string; share: string }>;
+}
+
+export interface QuickStatCardProps {
+  title: string;
+  value: string | number;
+  icon: ReactNode;
+}
+
+export interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+export interface StepCardProps {
+  number: string;
+  title: string;
+  description: string;
+}
+
+// Page props
 export interface HomeProps {
   // Add any props if needed for the Home component
 }
 
-// Add this new interface for the props that Home will pass to LandingPage
-export interface HomeLandingPageProps {
+export interface LandingPageProps {
   isConnected: boolean;
   onDashboardClick: () => void;
   onLoginPrompt: () => void;
 }
 
-// Add GitSplitsAppProps if needed
 export interface GitSplitsAppProps {
   isGitHubConnected: boolean;
+  setIsGitHubConnected: Dispatch<SetStateAction<boolean>>;
+}
+
+// Other component props
+export interface ContractOverviewProps {
+  contractBalance: bigint | unknown;
+  totalShares: bigint | unknown;
+  userShares: bigint | unknown;
+  userBalance:
+    | {
+        decimals: number;
+        formatted: string;
+        symbol: string;
+        value: bigint;
+      }
+    | undefined;
+}
+
+export interface ShareDistributionProps {
+  allShares: Share[];
+}
+
+export interface SharesListProps {
+  shares: Share[];
+}
+
+export interface ManageSharesProps {
+  contractAddress: `0x${string}`;
+}
+
+export interface DonationEmbedProps {
+  contractAddress: string;
+}
+
+// State interfaces
+export interface ContractState {
+  contractBalance: bigint;
+  totalShares: bigint;
+  userShares: bigint;
+  allShares: Share[];
+}
+
+// Utility interfaces
+export interface TooltipProps {
+  content: string;
+  children: ReactNode;
 }

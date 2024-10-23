@@ -1,14 +1,25 @@
-import { ethers, Provider } from "ethers";
+import { Contract, Signer } from "ethers";
 import GitHubSplitsABI from "../contracts/GitHubSplits.json";
 
 export const CONTRACT_ADDRESS = "0xa076D95476003420bae2E726B4fBdD968d3F98C1";
 
-export const getContract = (signer: ethers.Signer) => {
+let ethers: typeof import("ethers");
+
+if (typeof window !== "undefined") {
+  import("ethers").then((module) => {
+    ethers = module;
+  });
+}
+
+export const getContract = (signer: Signer) => {
+  if (!ethers) {
+    throw new Error("Ethers is not initialized");
+  }
   return new ethers.Contract(CONTRACT_ADDRESS, GitHubSplitsABI.abi, signer);
 };
 
 export const addShare = async (
-  signer: ethers.Signer,
+  signer: Signer,
   githubUsername: string,
   shareAmount: number
 ) => {
@@ -18,7 +29,7 @@ export const addShare = async (
 };
 
 export const claimFunds = async (
-  signer: ethers.Signer,
+  signer: Signer,
   githubUsername: string,
   proof: string
 ) => {
@@ -26,7 +37,11 @@ export const claimFunds = async (
   const tx = await contract.claim(githubUsername, proof);
   await tx.wait();
 };
-export const getContractBalance = async (provider: Provider) => {
+
+export const getContractBalance = async (provider: any) => {
+  if (!ethers) {
+    throw new Error("Ethers is not initialized");
+  }
   const contract = new ethers.Contract(
     CONTRACT_ADDRESS,
     GitHubSplitsABI.abi,

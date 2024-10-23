@@ -81,7 +81,14 @@ export interface StatCardProps {
 }
 
 export interface SplitsTableProps {
-  splits: Array<{ username: string; share: string }>;
+  splits: Array<{
+    avatar_url: string | undefined;
+    login: string | undefined;
+    contributions: ReactNode;
+    percentage: ReactNode;
+    username: string;
+    share: string;
+  }>;
 }
 
 export interface QuickStatCardProps {

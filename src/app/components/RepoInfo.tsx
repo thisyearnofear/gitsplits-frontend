@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { RepoInfo as RepoInfoType, Contributor } from "@/types";
+import { RepoInfo as RepoInfoType } from "@/types";
 import AttributionWidget from "./AttributionWidget";
 import EmbedCodeGenerator from "./EmbedCodeGenerator";
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,7 @@ const RepoInfo: React.FC<RepoInfoProps> = ({ url }) => {
       try {
         const info = await getRepoInfo(url);
         setRepoInfo(info);
-      } catch (err) {
+      } catch (error) {
         setError(
           "Failed to fetch repository information. Please check the URL."
         );

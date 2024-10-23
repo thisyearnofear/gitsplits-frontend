@@ -265,8 +265,16 @@ const LandingPage: React.FC<LandingPageProps> = ({
                     owner: "torvalds",
                     name: "linux",
                     contributors: [
-                      { username: "torvalds", contributions: 50 },
-                      { username: "gregkh", contributions: 30 },
+                      {
+                        username: "torvalds",
+                        contributions: 50,
+                        avatar_url: "",
+                      },
+                      {
+                        username: "gregkh",
+                        contributions: 30,
+                        avatar_url: "",
+                      },
                     ],
                     isFork: false,
                     originalRepo: null,
@@ -295,8 +303,16 @@ const LandingPage: React.FC<LandingPageProps> = ({
                     owner: "sindresorhus",
                     name: "awesome",
                     contributors: [
-                      { username: "sindresorhus", contributions: 50 },
-                      { username: "johnjago", contributions: 30 },
+                      {
+                        username: "sindresorhus",
+                        contributions: 50,
+                        avatar_url: "",
+                      },
+                      {
+                        username: "johnjago",
+                        contributions: 30,
+                        avatar_url: "",
+                      },
                     ],
                     isFork: false,
                     originalRepo: null,

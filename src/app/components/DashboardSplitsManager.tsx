@@ -31,7 +31,7 @@ import {
 
 const DashboardSplitsManager = () => {
   const [selectedRepo, setSelectedRepo] = useState("");
-  const [splits, setSplits] = useState([
+  const [splits, _setSplits] = useState([
     { username: "alice", share: 40, contributions: 156, role: "maintainer" },
     { username: "bob", share: 35, contributions: 89, role: "contributor" },
     { username: "charlie", share: 25, contributions: 67, role: "contributor" },

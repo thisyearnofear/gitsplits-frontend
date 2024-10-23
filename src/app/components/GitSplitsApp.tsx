@@ -20,12 +20,7 @@ import { DonationEmbed } from "@/app/components/DonationEmbed";
 import CodeAttribution from "@/app/components/CodeAttribution";
 import StatusMessage from "@/app/components/StatusMessage";
 import SharesList from "@/app/components/SharesList";
-import {
-  GitSplitsAppProps,
-  Share,
-  Contract,
-  QuickStatCardProps,
-} from "@/types";
+import { GitSplitsAppProps, Contract, QuickStatCardProps } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign, Users, PieChart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,10 +41,10 @@ const QuickStatCard: React.FC<QuickStatCardProps> = ({
   </Card>
 );
 
-const GitSplitsApp: React.FC<GitSplitsAppProps> = ({ isGitHubConnected }) => {
+const GitSplitsApp: React.FC<GitSplitsAppProps> = () => {
   const [isClient, setIsClient] = useState(false);
   const { address } = useAccount();
-  const [contracts, setContracts] = useState<Contract[]>([
+  const [contracts, _setContracts] = useState<Contract[]>([
     {
       address: "0x1234567890123456789012345678901234567890" as `0x${string}`,
       name: "Main Contract",
@@ -62,9 +57,9 @@ const GitSplitsApp: React.FC<GitSplitsAppProps> = ({ isGitHubConnected }) => {
     },
   ]);
   const [selectedContract, setSelectedContract] = useState(contracts[0]);
-  const [status, setStatus] = useState<string>("");
+  const [_status, _setStatus] = useState<string>("");
   const [donationAmount, setDonationAmount] = useState("");
-  const [isDonating, setIsDonating] = useState(false);
+  const [_isDonating, setIsDonating] = useState(false);
 
   const { data: contractBalance } = useReadContract({
     address: selectedContract.address,
@@ -139,7 +134,7 @@ const GitSplitsApp: React.FC<GitSplitsAppProps> = ({ isGitHubConnected }) => {
     <div className="min-h-screen bg-gradient-to-br from-gentle-blue via-gentle-purple to-gentle-orange">
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="container mx-auto px-4 py-8">
-        <StatusMessage status={status} />
+        <StatusMessage status={_status} />
 
         {/* Contract Selection */}
         <div className="flex justify-between items-center mb-6">

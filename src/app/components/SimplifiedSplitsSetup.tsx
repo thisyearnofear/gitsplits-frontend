@@ -50,20 +50,21 @@ const SimplifiedSplitsSetup: React.FC<SimplifiedSplitsSetupProps> = ({
     [contributors, totalPercentage]
   );
 
-  const handleInteraction = () => {
+  const handleInteraction = useCallback(() => {
     if (!isConnected) {
       onLoginRequired();
     } else {
       setHasInteracted(true);
     }
-  };
+  }, [isConnected, onLoginRequired]);
 
   const addContributor = useCallback(() => {
+    handleInteraction();
     setContributors((prev) => [
       ...prev,
       { username: "", percentage: 0, isValid: false, id: crypto.randomUUID() },
     ]);
-  }, []);
+  }, [handleInteraction]);
 
   const removeContributor = useCallback((id: string) => {
     setContributors((prev) => prev.filter((c) => c.id !== id));
@@ -71,7 +72,7 @@ const SimplifiedSplitsSetup: React.FC<SimplifiedSplitsSetupProps> = ({
 
   const updateContributor = useCallback(
     (id: string, field: keyof Contributor, value: string) => {
-      handleInteraction(); // Track interaction
+      handleInteraction();
       setContributors((prev) =>
         prev.map((contributor) => {
           if (contributor.id !== id) return contributor;
@@ -85,7 +86,7 @@ const SimplifiedSplitsSetup: React.FC<SimplifiedSplitsSetupProps> = ({
         })
       );
     },
-    []
+    [handleInteraction]
   );
 
   const validateGitHubUrl = useCallback(

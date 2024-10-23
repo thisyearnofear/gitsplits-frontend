@@ -35,8 +35,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const [activeRepo, setActiveRepo] = useState<string | null>(null);
   const [lastEnteredRepo, setLastEnteredRepo] = useState<string | null>(null);
-  const [repoInfo, setRepoInfo] = useState<any>(null);
-  const [contributors, setContributors] = useState<any[]>([]);
+  const [repoInfo, setRepoInfo] = useState<Record<string, any> | null>(null);
+  const [contributors, setContributors] = useState<Record<string, any>[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const { toast } = useToast();
@@ -95,13 +95,15 @@ const Dashboard: React.FC<DashboardProps> = ({
     }
   };
 
-  const calculateSplits = (contributors: any[]) => {
+  const calculateSplits = (contributors: Record<string, any>[]) => {
     const totalContributions = contributors.reduce(
       (sum, contributor) => sum + contributor.contributions,
       0
     );
     return contributors.map((contributor) => ({
-      ...contributor,
+      avatar_url: contributor.avatar_url,
+      login: contributor.login,
+      contributions: contributor.contributions,
       percentage: (
         (contributor.contributions / totalContributions) *
         100

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Github, Share2, GitFork, Star } from "lucide-react";
+import { Github, Share2, GitFork, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AttributionWidgetProps } from "@/types";
@@ -11,7 +11,7 @@ const AttributionWidget: React.FC<AttributionWidgetProps> = ({
   displayStyle,
   onSupportClick,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(displayStyle === "expanded");
+  const isExpanded = displayStyle === "expanded";
 
   const totalContributions = repoInfo.contributors.reduce(
     (sum, contributor) => sum + contributor.contributions,
@@ -53,7 +53,7 @@ const AttributionWidget: React.FC<AttributionWidgetProps> = ({
 
         {/* Expanded Content */}
         <AnimatePresence>
-          {(displayStyle === "expanded" || isExpanded) && (
+          {isExpanded && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}

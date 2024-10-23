@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAccount, useWriteContract, useSignMessage } from "wagmi";
+import { useWriteContract, useSignMessage } from "wagmi";
 import { parseEther } from "viem";
 import { toast } from "react-toastify";
 import GitHubSplitsABI from "@/contracts/GitHubSplits.json";
@@ -13,7 +13,6 @@ const ManageShares: React.FC<ManageSharesProps> = ({ contractAddress }) => {
   const [isAddingShare, setIsAddingShare] = useState(false);
   const [isClaimingFunds, setIsClaimingFunds] = useState(false);
 
-  const { address } = useAccount();
   const { writeContract } = useWriteContract();
   const { signMessageAsync } = useSignMessage();
 

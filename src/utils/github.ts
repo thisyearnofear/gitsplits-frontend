@@ -41,6 +41,7 @@ export async function getRepoInfo(url: string): Promise<RepoInfo> {
         (c: any): Contributor => ({
           username: c.login,
           contributions: c.contributions,
+          avatar_url: c.avatar_url,
         })
       ),
     };
